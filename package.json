@@ -1,0 +1,25 @@
+{
+  "name": "mynodesheets",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/src/app.js",
+  "types": "dist/src/app.d.ts",
+  "scripts": {
+    "clean": "rimraf dist",
+    "start": "npm run build && npm run copy-files && electron dist/src/app.js",
+    "copy-files": "copyfiles \"./**/*.html\" \"dist\"" ,
+    "build": "npm run clean && tsc --build"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "copyfiles": "^2.4.1",
+    "nodemon": "^2.0.15",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "electron": "^17.2.0"
+  }
+}
