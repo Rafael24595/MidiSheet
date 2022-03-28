@@ -1,0 +1,180 @@
+import { EModules } from "../../enum/EModules";
+import { IModule } from "../../interface/IModule";
+import { IElementModule } from "../../interface/IModuleElement";
+import { IResource } from "../../interface/IResource";
+import { KModules } from "../../modules/KModules";
+import { Modules } from "../../modules/Modules";
+import { ModuleElement } from "../ModuleElement";
+
+export class AbstractView {
+
+    private readonly undefined_template = "<h1>Template is not defined</h1>"
+
+    protected template!:string;
+
+    protected title!:string;
+    protected resources:{[key:string]:IResource} = {};
+    protected aux_scripts:{[key:string]:IModule} = {};
+    protected aux_styles:{[key:string]:IModule} = {};
+
+    protected readonly main_template: IModule = KModules.Templates.main;
+    protected readonly main_script!: IModule;
+    protected readonly main_style!: string;
+
+    constructor(){
+        this.addResources({id:"exports",swConstant:false,swParse:false,data:"{}"});
+    }
+
+    static start(){
+        return new this();
+    }
+
+    protected init():void{
+        this.setData();
+        this.setTemplate();
+        this.setTitle();
+        this.setMainScript();
+        this.setResources();
+        this.setAuxScripts();
+        this.setAuxStyles();
+    }
+
+    protected setData():void{}
+
+    public addResources(resource:IResource | IResource[]):void{
+        if("id" in resource){
+            resource = [resource];
+        }
+
+        for (const iterator of resource) {
+            this.resources[iterator.id] = iterator;
+        }
+    }
+
+    public addAuxScripts(script:IModule | IModule[]):void{
+        if("type" in script){
+            script = [script];
+        }
+
+        for (const iterator of script) {
+            if(iterator.type == EModules.js){
+                this.aux_scripts[iterator.name] = iterator;
+            }
+            else{
+                throw new Error("The elements must be an script");
+            }
+        }
+    }
+
+    public addAuxStyle(style:IModule | IModule[]):void{
+        if("type" in style){
+            style = [style];
+        }
+
+        for (const iterator of style) {
+            if(iterator.type == EModules.css){
+                this.aux_styles[iterator.name] = iterator;
+            }
+            else{
+                throw new Error("The elements must be an style");
+            }
+        }
+    }
+
+    public setTemplate():void{
+        this.template = Modules.readModule(this.main_template);
+    }
+
+    public setTitle():void{
+        let title = (this.title) ? this.title : "Undefined Title";
+        this.printData([
+            {name: "title", content:title, notation:"html"}
+        ]);   
+    }
+
+    private setMainScript():void{
+        let script = (this.main_script) ? Modules.getModulePath(this.main_script) : ModuleElement.getModuleElement("html-comment", "Main script not found");
+        let content = this.getScript(script ,true);
+
+        this.printData([
+            {name: "main-script",content: content,notation: "html-comment"}
+        ]);
+    }
+
+    private setResources():void{
+        let resourcesValue = [];
+
+        for (const iterator of Object.values(this.resources)) {
+            let swReadOnly = (iterator.swConstant) ? "const" : "let";
+            let content = (iterator.swParse) ? JSON.parse(iterator.data) : iterator.data;
+            resourcesValue.push(`${swReadOnly} ${iterator.id} = ${content};`);
+        }
+
+        let content = this.getScript(resourcesValue.join("\n"),false);
+
+        this.printData([
+            {name: "resources-area",content: content,notation: "html-comment"}
+        ]);
+    }
+
+    private setAuxScripts():void{
+        let scriptsValue = [];
+
+        for (const iterator of Object.values(this.aux_scripts)) {
+            let script = Modules.getModulePath(iterator);
+            scriptsValue.push(script);
+        }
+
+        let content = this.getScript(scriptsValue.join("\n"),true);
+
+        this.printData([
+            {name:"aux-scripts", content:content, notation:"html-comment"}
+        ]);
+    }
+
+    private setAuxStyles():void{
+        let scriptsValue = [];
+
+        for (const iterator of Object.values(this.aux_styles)) {
+            let script = Modules.getModulePath(iterator);
+            scriptsValue.push(script);
+        }
+
+        let content = this.getScript(scriptsValue.join("\n"),true);
+
+        this.printData([
+            {name:"aux-styles", content:content, notation:"html-comment"}
+        ]);
+    }
+
+    private getScript(content:string, swPath:boolean):string{
+        if(swPath)
+            return `<script src="${content}"></script>`;
+        return `<script>${content}</script>`;
+    }
+
+    public getTemplate(swClean?:boolean):string{
+        let header = "";
+        let content = (this.template) ? this.template : this.undefined_template;
+
+        if(!swClean || !this.template){
+            header = "data:text/html;charset=UTF-8,";
+        }
+    
+        return `${header}${encodeURIComponent(content)}`;
+    }
+
+    public printData(elements: IElementModule[]):void{
+        this.template = this.printModule(this.template, elements);
+    }
+
+    public printModule(module: string, elements: IElementModule[]):string{
+        for (const element of elements) {
+            const regex = ModuleElement.getModuleElementRegex(element.notation, element.name);
+            const content = element.content;
+            module = module.replace(regex, content);
+        }
+        return module;
+    }
+
+}
