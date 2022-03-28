@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{title}}</title>
+        <meta charset="UTF-8">
+        <!-- {{main-style}} -->
+        <!-- aux-styles -->
+            <!-- {{aux-styles}} -->
+        <!-- aux-styles -->
+    </head>
+    <body>
+        <!-- modules-area -->
+            {{modules-area}}
+        <!-- modules-area -->
+    </body>
+    <!-- resources-area -->
+        <!-- {{resources-area}} -->
+    <!-- resources-area -->
+    <!-- aux-scripts -->
+        <!-- {{aux-scripts}} -->
+    <!-- aux-scripts -->
+    <script>
+        ElectronPost.subscribe("MyPass", test);
+
+        function test(password, data){
+            console.log(password, data);
+            MIDI.startSync(data.note, data.finish, data.priority);
+        }
+    </script>
+    <!-- {{main-script}} -->
+</html>
