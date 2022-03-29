@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 
-class ElectronPost {
+export class ElectronPost {
     
     private static listenerVector:{[key:string]:any} = {};
 
@@ -14,7 +14,7 @@ class ElectronPost {
             let word = message.password;
             let data = message.data;
             
-            this.listener(word, data);console.log(message)
+            this.listener(word, data);
             
             if(pass.includes(word) || pass == ""){
                 this.customListener(custom, word, data);

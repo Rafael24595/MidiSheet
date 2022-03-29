@@ -1,7 +1,7 @@
 import { INote } from "../../interface/INote";
 import { IOscilatorCache } from "../../interface/IOscilatorCache";
 
-class MIDI {
+export class MIDI {
 
     public static readonly oscilatorLimit = 10;
     public static oscilatorCache:IOscilatorCache = {};
@@ -25,7 +25,7 @@ class MIDI {
         return null;
     }
 
-    public static async startSync(note:INote, finish:number, priority = false): Promise<MIDI | null> {console.log(note,finish,priority)
+    public static async startSync(note:INote, finish:number, priority = false): Promise<MIDI | null> {
         if(Object.keys(MIDI.oscilatorCache).length < MIDI.oscilatorLimit || priority){
             let midi = new MIDI();
             await midi.playAsync(note, finish);
@@ -42,7 +42,7 @@ class MIDI {
         });
     }
 
-    private setOscilator(noteData:INote): void{console.log(noteData)
+    private setOscilator(noteData:INote): void{
         let note = noteData.note;
         let scale = (noteData.scale == null) ? this.hzDef : noteData.scale;
         let volume = (noteData.volume == null) ? this.volumeDef : noteData.volume;

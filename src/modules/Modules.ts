@@ -6,7 +6,7 @@ import { readFileSync } from "original-fs";
 
 export class Modules {
 
-    public static getModulePath(module: IModule):string{
+    public static getModulePath(module: IModule, swExtension:boolean = true):string{
         const type = module.type;
         const name = module.name;
         const exception = module.exception;
@@ -36,7 +36,9 @@ export class Modules {
             break;
         }
 
-        return join(...pathSection, `${name}.${extension}`);
+        let extensionValue = (swExtension) ? `.${extension}` : "";
+
+        return join(...pathSection, `${name}${extensionValue}`);
     } 
 
     public static readModule(module: IModule | string):string{

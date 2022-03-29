@@ -94,7 +94,9 @@ export class AbstractView {
 
     private setMainScript():void{
         let script = (this.main_script) ? Modules.getModulePath(this.main_script) : ModuleElement.getModuleElement("html-comment", "Main script not found");
-        let content = this.getScript(script ,true);
+        if(this.main_script)
+            script = this.getRequire(script, this.main_script.name);
+        let content = this.getScript(script ,false);
 
         this.printData([
             {name: "main-script",content: content,notation: "html-comment"}
@@ -122,10 +124,11 @@ export class AbstractView {
 
         for (const iterator of Object.values(this.aux_scripts)) {
             let script = Modules.getModulePath(iterator);
-            scriptsValue.push(script);
+            let content = this.getRequire(script, iterator.name);
+            scriptsValue.push(content);
         }
 
-        let content = this.getScript(scriptsValue.join("\n"),true);
+        let content = this.getScript(scriptsValue.join("\n"), false);
 
         this.printData([
             {name:"aux-scripts", content:content, notation:"html-comment"}
@@ -136,8 +139,8 @@ export class AbstractView {
         let scriptsValue = [];
 
         for (const iterator of Object.values(this.aux_styles)) {
-            let script = Modules.getModulePath(iterator);
-            scriptsValue.push(script);
+            let style = Modules.getModulePath(iterator);
+            scriptsValue.push(style);
         }
 
         let content = this.getScript(scriptsValue.join("\n"),true);
@@ -145,6 +148,11 @@ export class AbstractView {
         this.printData([
             {name:"aux-styles", content:content, notation:"html-comment"}
         ]);
+    }
+
+    private getRequire(content:string, name:string):string{
+        content = content.replace(/\\/g,"\\\\");
+        return `const ${name} = require("${content}").${name}`;
     }
 
     private getScript(content:string, swPath:boolean):string{
