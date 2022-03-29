@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 
-export class ElectronPost {
+export class MElectronPost {
     
     private static listenerVector:{[key:string]:any} = {};
 

@@ -26,6 +26,7 @@ export class Modules {
                 extension = "html";
                 pathSection.push("html");
             break;
+            case EModules.ts:
             case EModules.js:
                 extension = "js";
                 pathSection.push("js");

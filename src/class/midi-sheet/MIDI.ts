@@ -1,3 +1,5 @@
+import { EScale } from "../../enum/EScale";
+import { EWaves } from "../../enum/EWaves";
 import { INote } from "../../interface/INote";
 import { IOscilatorCache } from "../../interface/IOscilatorCache";
 
@@ -10,8 +12,8 @@ export class MIDI {
     private oscilator!: OscillatorNode;
     private readonly id:string;
     private readonly volumeDef = 0.25;
-    private readonly hzDef = 880;
-    private readonly waveDef = "triangle";
+    private readonly hzDef = EScale.S4;
+    private readonly waveDef = EWaves.triangle;
     
     public constructor(){
         this.id = `oscilator-${Date.now()}`;

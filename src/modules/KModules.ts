@@ -5,7 +5,7 @@ export class KModules {
         main: {name:"mainTemplate", type:EModules.template}
     }
     static JS = {
-        midi: {name:"MIDI", type:EModules.js},
-        electronpost: {name:"ElectronPost", type:EModules.js}
+        electronpost: {name:"MElectronPost", type:EModules.ts},
+        midimodule: {name:"MMidiModule", type:EModules.ts}
     }
 }
