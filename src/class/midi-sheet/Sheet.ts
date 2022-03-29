@@ -2,10 +2,11 @@ import { ENote } from "../../enum/ENote";
 import { EScale } from "../../enum/EScale";
 import { EWaves } from "../../enum/EWaves";
 import { ESheet } from "../../interface/ISheet";
-import { MIDI } from "./MIDI";
+import { AbstractManager } from "../managers/AbsctractManager";
 
 export class Sheet{
 
+    private view!: AbstractManager;
     private threads!: string[][];
     private defaultPause;
     private measurePause;
@@ -15,7 +16,8 @@ export class Sheet{
     private swIgnore;
     private swPrint;
 
-    public constructor(data:ESheet){
+    public constructor(data:ESheet, view:AbstractManager){
+        this.view = view;
         this.defaultPause = (data.pause) ? data.pause : 200;
         this.measurePause = (data.measurePause) ? data.measurePause : this.defaultPause;
         this.volume = data.volume;
@@ -25,8 +27,8 @@ export class Sheet{
         this.swPrint = data.swPrint;
     }
 
-    public static play(data:ESheet): Sheet{console.log("XXX")
-        let instance = new Sheet(data);
+    public static play(data:ESheet, view:AbstractManager): Sheet{
+        let instance = new Sheet(data, view);
         instance.read(data);
         instance.replay();
         return instance;
@@ -45,7 +47,7 @@ export class Sheet{
         for(let thread of this.threads){
             let scaleValue = thread.shift();
             let scaleKey = <keyof typeof EScale> `S${scaleValue}`;
-            let scale = EScale[scaleKey];console.log("new")
+            let scale = EScale[scaleKey];
             if(scaleValue){
                 this.playThread(thread, scale);
             }
@@ -58,13 +60,16 @@ export class Sheet{
                 case "/":
                 break;
                 case "_":
-                    await MIDI.pauseSync(this.defaultPause/2);
+                    await this.pause(this.defaultPause/2);
+                    //await MIDI.pauseSync(this.defaultPause/2);
                 break;
                 case "|":
-                    await MIDI.pauseSync(this.measurePause*2);
+                    await this.pause(this.defaultPause*2);
+                    //await MIDI.pauseSync(this.measurePause*2);
                 break;
                 case "-":
-                    await MIDI.pauseSync(this.defaultPause);
+                    await this.pause(this.defaultPause);
+                    //await MIDI.pauseSync(this.defaultPause);
                 break;
                 default:
                     let pause = this.checkNext(thread,index);
@@ -82,11 +87,20 @@ export class Sheet{
 
                     if(noteValue){
                         this.print(scale, note, pause);
-                        await MIDI.startSync({note:noteValue,scale:scale,wave:this.wave,volume:this.volume}, pause, this.swIgnore);
+                        this.view.send("MidiPlay", {note:{note:noteValue,scale:scale,wave:this.wave,volume:this.volume}, finish:pause, priority:this.swIgnore})
+                        await this.pause(pause);
+                        //await MIDI.startSync({note:noteValue,scale:scale,wave:this.wave,volume:this.volume}, pause, this.swIgnore);
                     }
                 break;
             }
+
         }
+    }
+    
+    private async pause(pause:number):Promise<void>{
+        await new Promise<void>(resolve =>{
+            setTimeout(() => resolve(), pause);
+        })
     }
     
     private print(scale:EScale, note:string, pause:number): void{
