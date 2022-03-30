@@ -18,7 +18,7 @@ export class MMidiModule extends AbstractModulable{
             swPrint:true
         };
 
-        //Sheet.play(song);
+        setTimeout(()=>{Sheet.play(song);}, 1000);
     }
 
 }

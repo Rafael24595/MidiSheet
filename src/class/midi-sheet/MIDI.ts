@@ -19,22 +19,20 @@ export class MIDI {
         this.id = `oscilator-${Date.now()}`;
     }
 
-    public static start(note:INote, finish:number, priority = false): MIDI | null{
+    public static start(note:INote, finish:number, priority = false): void{
         if(Object.keys(MIDI.oscilatorCache).length < MIDI.oscilatorLimit || priority){
             let midi = new MIDI();
-            midi.play(note, finish);
-            return midi; 
+            return midi.play(note, finish);; 
         }
-        return null;
+        return;
     }
 
-    public static async startSync(note:INote, finish:number, priority = false): Promise<MIDI | null> {
+    public static async startSync(note:INote, finish:number, priority = false): Promise<void> {
         if(Object.keys(MIDI.oscilatorCache).length < MIDI.oscilatorLimit || priority){
             let midi = new MIDI();
-            await midi.playAsync(note, finish);
-            return midi;
+            return await midi.playAsync(note, finish);
         }
-        return null;
+        return;
     }
 
     public static async pauseSync(finish: number): Promise<void>{
@@ -79,7 +77,7 @@ export class MIDI {
     }
 
     private async playAsync(note:INote, finish:number): Promise<void> {
-        return new Promise(resolve=>{
+        return await new Promise(resolve=>{
             this.setOscilator(note);
             if(finish && finish > 0){
                 setTimeout(()=>{

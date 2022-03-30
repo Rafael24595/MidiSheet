@@ -1,11 +1,11 @@
 import { EModules } from "../enum/EModules";
+import { MMidiModule } from "./js/MMidiModule";
 
 export class KModules {
     static Templates = {
         main: {name:"mainTemplate", type:EModules.template}
     }
     static JS = {
-        electronpost: {name:"MElectronPost", type:EModules.ts},
-        midimodule: {name:"MMidiModule", type:EModules.ts}
+        midimodule: {name:MMidiModule.getClassName(), type:EModules.ts, exception:MMidiModule.getFilePath()}
     }
 }

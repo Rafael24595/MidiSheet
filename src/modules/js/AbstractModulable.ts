@@ -1,5 +1,4 @@
 import { Reflection } from "../../class/Reflection";
-import { TAbsClass, TClass } from "../../types/TClass";
 
 export abstract class AbstractModulable {
 
@@ -8,6 +7,10 @@ export abstract class AbstractModulable {
     }
 
     public abstract invoke():void;
+
+    public static getClassName():string{
+        return this.name;
+    }
 
     public static getFilePath():string{
         const nodeModule = this.getNodeModule();
