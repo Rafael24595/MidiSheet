@@ -1,8 +1,10 @@
 import { Sheet } from "../../class/midi-sheet/Sheet";
+import { AbstractModulable } from "./AbstractModulable";
 
-export class MMidiModule {
 
-    public static onInit():void{
+export class MMidiModule extends AbstractModulable{
+
+    public invoke(): void {
         let sheet = `
             5|e--cd-c----ce-dc---cd-e-c-------d--fa-gfe-ce-dc----cd-e-c----|
             4|--b----ba-a-----b-b-------a-a-------------------b-b-------a-a|`;
@@ -16,9 +18,7 @@ export class MMidiModule {
             swPrint:true
         };
 
-        Sheet.play(song);
+        //Sheet.play(song);
     }
 
 }
-
-MMidiModule.onInit();

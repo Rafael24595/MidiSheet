@@ -152,7 +152,7 @@ export class AbstractView {
 
     private getRequire(content:string, name:string):string{
         content = content.replace(/\\/g,"\\\\");
-        return `const ${name} = require("${content}").${name}`;
+        return `const ${name} = require("${content}").${name}.onInit()`;
     }
 
     private getScript(content:string, swPath:boolean):string{

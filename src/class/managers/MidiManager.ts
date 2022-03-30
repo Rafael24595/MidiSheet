@@ -25,7 +25,7 @@ export class MidiManager extends AbstractManager{
     
         let instance = this.getInstance(this.idconn, options);
         instance.loadView(MidiView.start());
-        //instance.hide();   
+        //instance.hide(); 
     }
 
     protected listener(message:IIpcMessage):void{
