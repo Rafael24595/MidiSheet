@@ -1,6 +1,6 @@
 import { EWaves } from "../enum/EWaves";
 
-export interface ESheet  { 
+export interface ISheet  { 
     sheet: string;
     pause?: number; 
     measurePause?: number; 

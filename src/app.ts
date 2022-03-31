@@ -5,6 +5,6 @@ import { MidiManager } from "./class/managers/MidiManager";
 app.on("ready", () => {
 
     MainManager.launch();    
-    MidiManager.launch();
+    //MidiManager.launch();
 
 });

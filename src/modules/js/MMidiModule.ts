@@ -1,24 +1,63 @@
 import { Sheet } from "../../class/midi-sheet/Sheet";
+import { EWaves } from "../../enum/EWaves";
+import { ISheet } from "../../interface/ISheet";
 import { AbstractModulable } from "./AbstractModulable";
 
 
 export class MMidiModule extends AbstractModulable{
 
+    private static sheetInstance:Sheet;
+
     public invoke(): void {
-        let sheet = `
-            5|e--cd-c----ce-dc---cd-e-c-------d--fa-gfe-ce-dc----cd-e-c----|
-            4|--b----ba-a-----b-b-------a-a-------------------b-b-------a-a|`;
-
-        let song = {
-            sheet: sheet,
-            pause: 200,
-            measurePause:0,
-            swIgnore:true,
-            swExtend:true,
-            swPrint:true
-        };
-
-        setTimeout(()=>{Sheet.play(song);}, 1000);
     }
 
+    public static readSheet(){
+        let sheetOptions = this.getsheetData();
+        
+        this.resetSheet();
+
+        this.play(sheetOptions);
+    }
+
+    private static getsheetData():ISheet{
+        let sheetInput = document.getElementById("sheet-place") as HTMLInputElement;
+        let pauseInput = document.getElementById("pause-place") as HTMLInputElement;
+        let measureInput = document.getElementById("measure-pause-place") as HTMLInputElement;
+        let volumeInput = document.getElementById("volume-place") as HTMLInputElement;
+        let waveInput = document.getElementById("wave-place") as HTMLInputElement;
+        let extendInput = document.getElementById("extend-place") as HTMLInputElement;
+
+        let sheet = (sheetInput) ? sheetInput.value : "";
+        let pause = (pauseInput) ? Number(pauseInput.value) : 200;
+        let measure = (measureInput) ? Number(measureInput.value) : 0;
+        let volume = (volumeInput) ? Number(volumeInput.value) / 100 : 0;
+            volume = (volume < 0) ? 0 : volume;
+            volume = (volume > 100) ? 100 : volume;
+        let wave = (waveInput) ? waveInput.value as EWaves : EWaves.triangle;
+            wave = (!EWaves[wave]) ? EWaves.triangle : wave; 
+        let extend = (extendInput.checked) ? true : false;
+
+        return {
+            sheet:sheet,
+            pause:pause,
+            measurePause:measure,
+            volume:volume,
+            wave:wave,
+            swExtend:extend
+        };
+    }
+
+    private static resetSheet():void{
+        if(this.sheetInstance && this.sheetInstance.isPlaying())
+            this.sheetInstance.stop();
+    }
+
+    public static stopSheet():void{
+        if(this.sheetInstance)
+            MMidiModule.sheetInstance.stop();
+    }
+
+    public static play(sheet:ISheet){
+        MMidiModule.sheetInstance = Sheet.play(sheet);
+    }
 }

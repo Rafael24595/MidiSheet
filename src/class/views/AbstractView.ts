@@ -2,9 +2,14 @@ import { EModules } from "../../enum/EModules";
 import { IModule } from "../../interface/IModule";
 import { IElementModule } from "../../interface/IModuleElement";
 import { IResource } from "../../interface/IResource";
+import { ISelectOption } from "../../interface/ISelectOption";
+import { Groove } from "../../modules/grooves/Groove";
+import { AbstractModulable } from "../../modules/js/AbstractModulable";
 import { KModules } from "../../modules/KModules";
 import { Modules } from "../../modules/Modules";
+import { TClass } from "../../types/TClass";
 import { ModuleElement } from "../ModuleElement";
+import { Reflection } from "../Reflection";
 
 export class AbstractView {
 
@@ -18,6 +23,7 @@ export class AbstractView {
     protected aux_styles:{[key:string]:IModule} = {};
 
     protected readonly main_template: IModule = KModules.Templates.main;
+    protected readonly groove_template!: string[];
     protected readonly main_script!: IModule;
     protected readonly main_style!: string;
 
@@ -37,6 +43,32 @@ export class AbstractView {
         this.setResources();
         this.setAuxScripts();
         this.setAuxStyles();
+        this.print();
+    }
+
+    private print():void{
+        this.printGrooves();
+        this.printMain();
+    }
+
+    private printGrooves():void{
+        let content = "Not data found";
+
+        if(this.groove_template){
+            let grooves = [];
+            for (const groove of this.groove_template) {
+                grooves.push(Groove.getGroove(groove));
+            }
+            content = grooves.join("\n");
+        }
+
+        this.printData([
+            {name: "modules-area", content:content, notation:"html"}
+        ]);  
+    }
+
+    protected printMain():void{
+        throw new Error("Method not implemented");
     }
 
     protected setData():void{}
@@ -150,9 +182,28 @@ export class AbstractView {
         ]);
     }
 
+    public getCallBack(clazz:TClass, method: string, args:any = []):string{
+        const className = clazz.name;
+
+        //if(!Reflection.methodExists(method, clazz))
+            //throw new Error("Method not exists");
+        
+
+        return `${className}.${method}(${args.join(",")})`;
+    }
+
+    public getSelectOptions(options:ISelectOption[]):string{
+        let htmlOptions = [];
+        for (const option of options) {
+            const selected = (option.selected) ? "selected" : "";
+            htmlOptions.push(`<option value="${option.value}" ${selected}>${option.name}</option>`);
+        }
+        return htmlOptions.join("\n");
+    }
+
     private getRequire(content:string, name:string):string{
         content = content.replace(/\\/g,"\\\\");
-        return `const ${name} = require("${content}").${name}.onInit()`;
+        return `const ${name} = require("${content}").${name}; ${name}.onInit()`;
     }
 
     private getScript(content:string, swPath:boolean):string{

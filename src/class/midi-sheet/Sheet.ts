@@ -1,7 +1,7 @@
 import { ENote } from "../../enum/ENote";
 import { EScale } from "../../enum/EScale";
 import { EWaves } from "../../enum/EWaves";
-import { ESheet } from "../../interface/ISheet";
+import { ISheet } from "../../interface/ISheet";
 import { MIDI } from "./MIDI";
 
 export class Sheet {
@@ -14,8 +14,10 @@ export class Sheet {
     private swExtend;
     private swIgnore;
     private swPrint;
+    private playingCount!: number;
+    private swPause = false;
 
-    public constructor(data:ESheet){
+    public constructor(data:ISheet){
         this.defaultPause = (data.pause) ? data.pause : 200;
         this.measurePause = (data.measurePause) ? data.measurePause : this.defaultPause;
         this.volume = data.volume;
@@ -25,14 +27,19 @@ export class Sheet {
         this.swPrint = data.swPrint;
     }
 
-    public static play(data:ESheet): Sheet{
+    public static play(data:ISheet): Sheet{
         let instance = new Sheet(data);
         instance.read(data);
         instance.replay();
         return instance;
     }
 
-    private read(data:ESheet): void{
+    public stop():void{
+        if(!this.swPause && this.threads.length > 0)
+            this.swPause = true;
+    }
+
+    private read(data:ISheet): void{
         let sections = data.sheet.split("\n");
     
         this.threads = sections
@@ -42,18 +49,37 @@ export class Sheet {
     }
     
     public replay(): void{
+        this.playingCount = this.threads.length;
+        this.swPause = false;
         for(let thread of this.threads){
             let scaleValue = thread.shift();
             let scaleKey = <keyof typeof EScale> `S${scaleValue}`;
             let scale = EScale[scaleKey];
             if(scaleValue){
-                this.playThread(thread, scale);
+                this.watchThread(thread, scale);
             }
+        }
+    }
+
+    private async watchThread(thread:string[], scale:EScale):Promise<void>{
+        await this.playThread(thread, scale);
+
+        if(this.playingCount == 0){
+            this.swPause = false;
+            throw new Error("Sheet thread error");
+        }
+           
+        this.playingCount = this.playingCount -1; 
+
+        if(this.swPause && this.playingCount == 0){
+            this.swPause = false;
         }
     }
 
     private async playThread(thread:string[], scale:EScale): Promise<void>{
         for (const [index, note] of thread.entries()) {
+            if(this.swPause)
+                return;
             switch (note) {
                 case "/":
                 break;
@@ -86,7 +112,6 @@ export class Sheet {
                     }
                 break;
             }
-
         }
     }
     
@@ -129,6 +154,10 @@ export class Sheet {
             pause = this.checkHold(thread, pause, index+1);
         }
         return pause;
+    }
+
+    public isPlaying():boolean{
+        return this.playingCount > 0;
     }
 
 }
