@@ -52,6 +52,11 @@ export class MMidiModule extends AbstractModulable{
             this.sheetInstance.stop();
     }
 
+    public static pauseSheet():void{
+        if(this.sheetInstance)
+            MMidiModule.sheetInstance.pause();
+    }
+
     public static stopSheet():void{
         if(this.sheetInstance)
             MMidiModule.sheetInstance.stop();

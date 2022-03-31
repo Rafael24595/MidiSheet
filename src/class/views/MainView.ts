@@ -28,6 +28,7 @@ export class MainView extends AbstractView{
         module = this.printModule(module, [
             {name: "callback_play", content:this.getCallBack(MMidiModule, "readSheet"), notation:"html"},
             {name: "callback_stop", content:this.getCallBack(MMidiModule, "stopSheet"), notation:"html"},
+            {name: "callback_pause", content:this.getCallBack(MMidiModule, "pauseSheet"), notation:"html"},
             {name: "wave-select", content:this.getSelectOptions([
                 {name:EWaves.triangle, value:EWaves.triangle, selected:false},
                 {name:EWaves.sawtooth, value:EWaves.sawtooth},

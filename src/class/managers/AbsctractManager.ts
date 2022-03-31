@@ -56,7 +56,7 @@ export class AbstractManager {
         if(!this.swMain){
             this.browserWindow.hide();
         }else{
-            console.error("Cannot hide Main")
+            console.error("Cannot hide Main");
         } 
     }
 
