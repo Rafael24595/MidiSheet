@@ -18,7 +18,7 @@
     3|--c-c-d-e-d-c-g-e---g-|-g-g-G-f-D-|-d-g-c-|
     ```
 - **Pause**: 200.
-- **Measure Pause**: 0.
+- **Measure Pause**: 300.
 - **Volume**: 25.
 - **Wave**: *Square*.
 - **Extend**: true.
