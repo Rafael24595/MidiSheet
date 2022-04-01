@@ -1,22 +1,20 @@
 import { ENote } from "../../enum/ENote";
 import { EScale } from "../../enum/EScale";
 import { EWaves } from "../../enum/EWaves";
+import { SheeThread } from "../../interface/ISheedThread";
 import { ISheet } from "../../interface/ISheet";
 import { MIDI } from "./MIDI";
-
-interface SheeThread{
-    index:number,
-    notes:string[]
-}
 
 export class Sheet {
 
     private threads!: SheeThread[];
+    private nextSheet!: string;
     private defaultPause;
     private measurePause;
     private volume;
     private wave;
     private swExtend;
+    private swMulti;
     private swIgnore;
     private swPrint;
     private playingCount!: number;
@@ -29,13 +27,14 @@ export class Sheet {
         this.volume = data.volume;
         this.wave = data.wave;
         this.swExtend = data.swExtend;
+        this.swMulti = data.swMulti;
         this.swIgnore = data.swIgnore;
         this.swPrint = data.swPrint;
     }
 
     public static play(data:ISheet): Sheet{
         let instance = new Sheet(data);
-        instance.read(data);
+        instance.read(data.sheet);
         instance.replay();
         return instance;
     }
@@ -52,25 +51,40 @@ export class Sheet {
             this.replay();
     }
 
-    private read(data:ISheet): void{
-        let sections = data.sheet.split("\n");
-    
+    private read(sheet:string): void{
+        let sections = this.readMulti(sheet);
+         
         this.threads = sections
+            .split("\n")
             .map(sections => sections.trim())
             .filter(section => section != "")
             .map(section => {
                 let notes = section.split(""); 
-                return {index:1,notes};
+                let scale = Number(notes.shift());
+                return {
+                    index:0,scale,notes};
             });
     }
-    
+
+    private readMulti(sheet:string):string{
+        let mainSheet;
+
+        if(this.swMulti){
+            let sheets = sheet.split("\n\n");
+            mainSheet = sheets.shift();
+            this.nextSheet = sheets.join("\n\n");
+        }
+
+        return (mainSheet && mainSheet != "") ? mainSheet : sheet;
+    }
+
     public replay(): void{
         this.playingCount = this.threads.length;
         this.swStop = false;
         this.swPause = false;
         for(let thread of this.threads){
             let scaleValue = thread.notes[0];
-            let scaleKey = <keyof typeof EScale> `S${scaleValue}`;
+            let scaleKey = <keyof typeof EScale> `S${thread.scale}`;
             let scale = EScale[scaleKey];
             if(scaleValue){
                 this.watchThread(thread, scale);
@@ -89,15 +103,18 @@ export class Sheet {
         if(!this.swPause){
             this.playingCount = this.playingCount -1; 
 
-            if(this.swStop && this.playingCount == 0){
+            if(this.playingCount == 0){
+                if(this.swMulti && !this.swStop && this.nextSheet && this.nextSheet != ""){
+                    this.read(this.nextSheet);
+                    this.replay();
+                } 
                 this.swStop = false;
             }
         }
-        
     }
 
     private async playThread(thread:SheeThread, scale:EScale): Promise<void>{
-        for (;thread.index < thread.notes.length && !this.swStop && !this.swPause;) {
+        for (;thread.index < thread.notes.length && !this.swStop && !this.swPause; thread.index ++) {
             const note = thread.notes[thread.index];
             
             switch (note) {
@@ -132,7 +149,6 @@ export class Sheet {
                     }
                 break;
             }
-            thread.index = thread.index + 1;
         }
     }
     

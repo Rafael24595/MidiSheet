@@ -26,6 +26,7 @@ export class MMidiModule extends AbstractModulable{
         let volumeInput = document.getElementById("volume-place") as HTMLInputElement;
         let waveInput = document.getElementById("wave-place") as HTMLInputElement;
         let extendInput = document.getElementById("extend-place") as HTMLInputElement;
+        let multiInput = document.getElementById("multisheet-place") as HTMLInputElement;
 
         let sheet = (sheetInput) ? sheetInput.value : "";
         let pause = (pauseInput) ? Number(pauseInput.value) : 200;
@@ -35,7 +36,8 @@ export class MMidiModule extends AbstractModulable{
             volume = (volume > 100) ? 100 : volume;
         let wave = (waveInput) ? waveInput.value as EWaves : EWaves.triangle;
             wave = (!EWaves[wave]) ? EWaves.triangle : wave; 
-        let extend = (extendInput.checked) ? true : false;
+        let extend = extendInput.checked;
+        let multi = multiInput.checked;
 
         return {
             sheet:sheet,
@@ -43,7 +45,9 @@ export class MMidiModule extends AbstractModulable{
             measurePause:measure,
             volume:volume,
             wave:wave,
-            swExtend:extend
+            swExtend:extend,
+            swMulti:multi,
+            swPrint:true
         };
     }
 
@@ -53,8 +57,8 @@ export class MMidiModule extends AbstractModulable{
     }
 
     public static pauseSheet():void{
-        if(this.sheetInstance)
-            MMidiModule.sheetInstance.pause();
+        //if(this.sheetInstance)
+            //MMidiModule.sheetInstance.pause();
     }
 
     public static stopSheet():void{

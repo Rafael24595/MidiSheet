@@ -7,6 +7,7 @@ export interface ISheet  {
     volume?: number; 
     wave?: EWaves; 
     swExtend?: boolean; 
+    swMulti?: boolean;
     swIgnore?: boolean; 
     swPrint?: boolean; 
 }
