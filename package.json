@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "start": "npm run build && npm run copy-files && electron dist/src/app.js",
-    "copy-files": "copyfiles \"./**/*.html\" \"dist\"",
+    "copy-files": "copyfiles \"./**/*.css\" \"./**/*.html\" \"dist\"",
     "build": "npm run clean && tsc --build"
   },
   "author": "",

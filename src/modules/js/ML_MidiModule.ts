@@ -4,7 +4,7 @@ import { ISheet } from "../../interface/ISheet";
 import { AbstractModulable } from "./AbstractModulable";
 
 
-export class MMidiModule extends AbstractModulable{
+export class ML_MidiModule extends AbstractModulable{
 
     private static sheetInstance:Sheet;
 
@@ -58,15 +58,15 @@ export class MMidiModule extends AbstractModulable{
 
     public static pauseSheet():void{
         //if(this.sheetInstance)
-            //MMidiModule.sheetInstance.pause();
+            //MSMidiModule.sheetInstance.pause();
     }
 
     public static stopSheet():void{
         if(this.sheetInstance)
-            MMidiModule.sheetInstance.stop();
+        ML_MidiModule.sheetInstance.stop();
     }
 
     public static play(sheet:ISheet){
-        MMidiModule.sheetInstance = Sheet.play(sheet);
+        ML_MidiModule.sheetInstance = Sheet.play(sheet);
     }
 }

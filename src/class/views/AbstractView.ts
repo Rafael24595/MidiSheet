@@ -4,12 +4,10 @@ import { IElementModule } from "../../interface/IModuleElement";
 import { IResource } from "../../interface/IResource";
 import { ISelectOption } from "../../interface/ISelectOption";
 import { Groove } from "../../modules/grooves/Groove";
-import { AbstractModulable } from "../../modules/js/AbstractModulable";
 import { KModules } from "../../modules/KModules";
 import { Modules } from "../../modules/Modules";
 import { TClass } from "../../types/TClass";
 import { ModuleElement } from "../ModuleElement";
-import { Reflection } from "../Reflection";
 
 export class AbstractView {
 
@@ -25,7 +23,7 @@ export class AbstractView {
     protected readonly main_template: IModule = KModules.Templates.main;
     protected readonly groove_template!: string[];
     protected readonly main_script!: IModule;
-    protected readonly main_style!: string;
+    protected readonly main_style!: IModule;
 
     constructor(){
         this.addResources({id:"exports",swConstant:false,swParse:false,data:"{}"});
@@ -40,6 +38,7 @@ export class AbstractView {
         this.setTemplate();
         this.setTitle();
         this.setMainScript();
+        this.setMainStyle();
         this.setResources();
         this.setAuxScripts();
         this.setAuxStyles();
@@ -128,10 +127,19 @@ export class AbstractView {
         let script = (this.main_script) ? Modules.getModulePath(this.main_script) : ModuleElement.getModuleElement("html-comment", "Main script not found");
         if(this.main_script)
             script = this.getRequire(script, this.main_script.name);
-        let content = this.getScript(script ,false);
+        let content = this.getScript(script, false);
 
         this.printData([
             {name: "main-script",content: content,notation: "html-comment"}
+        ]);
+    }
+
+    private setMainStyle():void{
+        let style = (this.main_style) ? Modules.getModulePath(this.main_style) : ModuleElement.getModuleElement("html-comment", "Main style not found");
+        let content = this.getStyle(style, true);
+
+        this.printData([
+            {name:"main-style", content:content, notation:"html-comment"}
         ]);
     }
 
@@ -160,7 +168,7 @@ export class AbstractView {
             scriptsValue.push(content);
         }
 
-        let content = this.getScript(scriptsValue.join("\n"), false);
+        let content = (scriptsValue.length > 0) ? this.getScript(scriptsValue.join("\n"), false) : ModuleElement.getModuleElement("html-comment", "Not aux scripts declared");
 
         this.printData([
             {name:"aux-scripts", content:content, notation:"html-comment"}
@@ -168,14 +176,14 @@ export class AbstractView {
     }
 
     private setAuxStyles():void{
-        let scriptsValue = [];
+        let stylesValue = [];
 
         for (const iterator of Object.values(this.aux_styles)) {
             let style = Modules.getModulePath(iterator);
-            scriptsValue.push(style);
+            stylesValue.push(style);
         }
 
-        let content = this.getScript(scriptsValue.join("\n"),true);
+        let content = (stylesValue.length > 0) ? this.getStyle(stylesValue.join("\n"), true) : ModuleElement.getModuleElement("html-comment", "Not aux styles declared");
 
         this.printData([
             {name:"aux-styles", content:content, notation:"html-comment"}
@@ -210,6 +218,12 @@ export class AbstractView {
         if(swPath)
             return `<script src="${content}"></script>`;
         return `<script>${content}</script>`;
+    }
+
+    private getStyle(content:string, swPath:boolean):string{
+        if(swPath)
+            return `<link rel="stylesheet" href="${content}">`;
+        return `<style>${content}</style>`;
     }
 
     public getTemplate(swClean?:boolean):string{
