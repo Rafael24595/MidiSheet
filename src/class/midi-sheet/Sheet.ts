@@ -3,6 +3,7 @@ import { EScale } from "../../enum/EScale";
 import { EWaves } from "../../enum/EWaves";
 import { SheeThread } from "../../interface/ISheedThread";
 import { ISheet } from "../../interface/ISheet";
+import { Tools } from "../Tools";
 import { MIDI } from "./MIDI";
 
 export class Sheet {
@@ -22,8 +23,8 @@ export class Sheet {
     private swStop = false;
 
     public constructor(data:ISheet){
-        this.defaultPause = (data.pause) ? data.pause : 200;
-        this.measurePause = (data.measurePause) ? data.measurePause : this.defaultPause;
+        this.defaultPause = Tools.isWholeNumber(data.pause) ? data.pause as number : 200;
+        this.measurePause = Tools.isWholeNumber(data.measurePause) ? data.measurePause as number : this.defaultPause;
         this.volume = data.volume;
         this.wave = data.wave;
         this.swExtend = data.swExtend;
