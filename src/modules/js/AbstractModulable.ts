@@ -2,11 +2,11 @@ import { Reflection } from "../../class/Reflection";
 
 export abstract class AbstractModulable {
 
-    public static onInit():void{
-        Reflection.runInstanceMethodByName("invoke", this);
+    public static onInit(args:any):void{
+        Reflection.runInstanceMethodByName("invoke", this, [], [args]);
     }
 
-    public abstract invoke():void;
+    public abstract invoke(...args:any):void;
 
     public static getClassName():string{
         return this.name;

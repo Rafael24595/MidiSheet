@@ -6,8 +6,8 @@ export class MidiView extends AbstractView{
 
     protected main_script: IModule = KModules.JS.midimodule;
 
-    constructor(){
-        super();
+    constructor(args?:any){
+        super(args);
         this.init();
     }
 

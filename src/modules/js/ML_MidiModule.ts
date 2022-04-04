@@ -8,7 +8,7 @@ export class ML_MidiModule extends AbstractModulable{
 
     private static sheetInstance:Sheet;
 
-    public invoke(): void {
+    public invoke(...args:any): void {
     }
 
     public static readSheet(){

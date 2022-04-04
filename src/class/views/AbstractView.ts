@@ -20,17 +20,24 @@ export class AbstractView {
     protected aux_scripts:{[key:string]:IModule} = {};
     protected aux_styles:{[key:string]:IModule} = {};
 
+    protected args!:any;
+
     protected readonly main_template: IModule = KModules.Templates.main;
     protected readonly groove_template!: string[];
     protected readonly main_script!: IModule;
     protected readonly main_style!: IModule;
 
-    constructor(){
+    constructor(args?:any){
+        this.args = args;
         this.addResources({id:"exports",swConstant:false,swParse:false,data:"{}"});
     }
 
     static start(){
         return new this();
+    }
+
+    static startArgs(args?:any){
+        return new this(args);
     }
 
     protected init():void{
@@ -126,7 +133,7 @@ export class AbstractView {
     private setMainScript():void{
         let script = (this.main_script) ? Modules.getModulePath(this.main_script) : ModuleElement.getModuleElement("html-comment", "Main script not found");
         if(this.main_script)
-            script = this.getRequire(script, this.main_script.name);
+            script = this.getRequire(script, this.main_script.name, this.args);
         let content = this.getScript(script, false);
 
         this.printData([
@@ -209,9 +216,10 @@ export class AbstractView {
         return htmlOptions.join("\n");
     }
 
-    private getRequire(content:string, name:string):string{
+    private getRequire(content:string, name:string, args?:any):string{
         content = content.replace(/\\/g,"\\\\");
-        return `const ${name} = require("${content}").${name}; ${name}.onInit()`;
+        const argsValue = (args != undefined) ? JSON.stringify(args) : "";
+        return `const ${name} = require("${content}").${name}; ${name}.onInit(${argsValue})`;
     }
 
     private getScript(content:string, swPath:boolean):string{
