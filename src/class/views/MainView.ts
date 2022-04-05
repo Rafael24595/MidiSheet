@@ -9,7 +9,7 @@ import { AbstractView } from "./AbstractView";
 
 export class MainView extends AbstractView {
 
-    protected title: string = "MyMidiSheets"
+    protected title: string = "MyMidiBox"
     protected groove_template: string[] = MainTemplate;
     protected main_script: IModule = KModules.JS.midimodule;
     protected main_style: IModule = KModules.CSS.midimodule;

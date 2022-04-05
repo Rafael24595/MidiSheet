@@ -1,36 +1,55 @@
 <div>
-    <label for="sheet">
-        <p><b>-Sheet</b>:</p>
-        <textarea name="sheet" id="sheet-place" cols="80" rows="20"></textarea>
-    </label>
-    <label for="pause">
-        <p><b>-Pause</b>:</p>
-        <input name="pause" id="pause-place" type="number" value="200">
-    </label>
-    <label for="measure-pause">
-        <p><b>-Measure pause</b>:</p>
-        <input name="measure-pause" id="measure-pause-place" type="number" value="0">
-    </label>
-    <label for="volume">
-        <p><b>-Volume (<i>0-100</i>)</b>:</p>
-        <input name="volume" id="volume-place" type="number" value="25" min="0" max="100">
-    </label>
-    <label for="wave">
-        <p><b>-Wave</b>:</p>
-        <select name="wave" id="wave-place">
-            {{wave-select}}
-        </select>
-    </label>
-    <label style="display: block;" for="swextend">
-        <p style="display: inline-block;"><b>-Extend (<i>Beta</i>):</b></p>
-        <input name="swextend" id="extend-place" type="checkbox">
-    </label>
-    <label style="display: block;" for="multisheet">
-        <p style="display: inline-block;"><b>-Multi-Sheet (<i>with double line break</i>):</b></p>
-        <input name="multisheet" id="multisheet-place" type="checkbox" checked>
-    </label>
-    <br><br>
-    <button onclick="{{callback_play}}">Play</button>
-    <!--<button onclick="{{callback_pause}}">Pause</button>-->
-    <button onclick="{{callback_stop}}">Stop</button>
+    <div id="sheet-container">
+        <label for="sheet">
+            <h2><b>Sheet</b></h2>
+            <textarea name="sheet" id="sheet-place" cols="80" rows="20"></textarea>
+        </label>
+    </div>
+    <div id="form-container">
+        <ul>
+            <li>
+                <label for="pause">
+                    <p style="display: inline-block;"><b>Pause</b>:</p>
+                    <input style="display: block;" name="pause" id="pause-place" type="number" value="200">
+                </label>
+            </li>
+            <li>
+                <label for="measure-pause">
+                    <p><b>Measure pause</b>:</p>
+                    <input name="measure-pause" id="measure-pause-place" type="number" value="0">
+                </label>
+            </li>
+            <li>
+                <label for="volume">
+                    <p><b>Volume (<i>0-100</i>)</b>:</p>
+                    <input name="volume" id="volume-place" type="number" value="25" min="0" max="100">
+                </label>
+            </li>
+            <li>
+                <label for="wave">
+                    <p><b>Wave</b>:</p>
+                    <select name="wave" id="wave-place">
+                        {{wave-select}}
+                    </select>
+                </label>
+            </li>
+            <li>
+                <label style="display: block;" for="swextend">
+                    <p style="display: inline-block;"><b>Extend (<i>Beta</i>):</b></p>
+                    <input name="swextend" id="extend-place" type="checkbox">
+                </label>
+            </li>
+            <li>
+                <label style="display: block;" for="multisheet">
+                    <p style="display: inline-block;"><b>Multi-Sheet (<i>with double line break</i>):</b></p>
+                    <input name="multisheet" id="multisheet-place" type="checkbox" checked>
+                </label>
+            </li>
+        </ul>
+    </div>
+    <div class="button-container">
+        <button onclick="{{callback_play}}">Play</button>
+        <!--<button onclick="{{callback_pause}}">Pause</button>-->
+        <button onclick="{{callback_stop}}">Stop</button>
+    </div>
 </div>

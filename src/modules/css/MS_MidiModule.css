@@ -1,5 +1,30 @@
+#sheet-container{
+    text-align: center;
+}
+
 #sheet-place{
     background-color: black;
     color: white;
     font-weight: bold;
+    text-align: center;
+}
+
+#form-container{
+    margin: 10px;
+    background-color: darkseagreen;
+}
+
+.button-container{
+    text-align: center;
+    margin: 10px;
+    background-color: antiquewhite;
+}
+
+.button-container button{
+    margin: 10px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 2px groove;
+    background: white;
 }
